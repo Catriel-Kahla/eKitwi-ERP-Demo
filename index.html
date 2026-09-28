@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eKitwi ERP - Iniciar sesión</title>
+    <link rel="icon" type="image/svg+xml" href="assets/images/eKitwi.svg">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/semantic.min.css">
+    <link rel="stylesheet" href="assets/css/login.css">
+</head>
+<body class="admin-login-body">
+
+    <div class="admin-login-split">
+        <div class="admin-login-brand">
+            <img class="admin-login-logo" src="assets/images/eKitwi.svg" alt="eKitwi">
+            <span class="admin-login-brand-text">ERP</span>
+        </div>
+
+        <div class="admin-login-form-panel">
+            <div class="admin-login-card">
+                <div class="admin-login-header">
+                    <p class="subtitle">Inicio de Sesión</p>
+                    <p class="subtitle">Panel ERP</p>
+                </div>
+
+                <div class="ui negative message hidden" id="login-error"></div>
+
+                <form class="ui form" id="erp-login-form" novalidate>
+                    <div class="field" id="field-email">
+                        <label>Correo electrónico</label>
+                        <div class="ui left icon input">
+                            <i class="envelope icon"></i>
+                            <input type="email" id="erp-email" name="email" placeholder="admin@ekitwi.com" autocomplete="username" required>
+                        </div>
+                    </div>
+                    <div class="field" id="field-password">
+                        <label>Contraseña</label>
+                        <div class="ui left icon input">
+                            <i class="lock icon"></i>
+                            <input type="password" id="erp-password" name="password" placeholder="••••••••" autocomplete="current-password" required>
+                        </div>
+                    </div>
+                    <button class="ui fluid large button primary" type="submit" id="login-btn">
+                        Iniciar sesión
+                    </button>
+                    <p style="text-align:center;margin-top:1rem">
+                        <a href="#" id="register-link" style="color:var(--admin-text-muted);font-size:0.85rem">¿No tenés cuenta? Registrate</a>
+                    </p>
+                </form>
+
+                <div id="register-panel" style="display:none">
+                    <div class="ui negative message hidden" id="register-error"></div>
+                    <div class="ui positive message hidden" id="register-success"></div>
+                    <form class="ui form" id="register-form" novalidate>
+                        <p style="color:var(--admin-text-muted);font-size:0.88rem;margin-bottom:1rem">
+                            Creá tu cuenta de eKitwi. Después vas a poder contratar un servicio y armar tu propio suit.
+                        </p>
+                        <div class="field">
+                            <label>Correo electrónico</label>
+                            <div class="ui left icon input">
+                                <i class="envelope icon"></i>
+                                <input type="email" id="register-email" placeholder="tu@email.com" autocomplete="username" required>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label>Contraseña</label>
+                            <div class="ui left icon input">
+                                <i class="lock icon"></i>
+                                <input type="password" id="register-password" placeholder="••••••••" autocomplete="new-password" required>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label>Confirmar contraseña</label>
+                            <div class="ui left icon input">
+                                <i class="lock icon"></i>
+                                <input type="password" id="register-confirm" placeholder="••••••••" autocomplete="new-password" required>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="ui checkbox">
+                                <input type="checkbox" id="register-terms">
+                                <label style="color:var(--admin-text-muted);font-size:0.85rem">
+                                    Acepto los <a href="https://ekitwi.com/pages/legal.html" target="_blank" rel="noopener">Términos y Condiciones</a> de eKitwi.
+                                </label>
+                            </div>
+                        </div>
+                        <button class="ui fluid large button primary" type="submit" id="register-submit-btn">
+                            Crear cuenta
+                        </button>
+                        <p style="text-align:center;margin-top:1rem">
+                            <a href="#" id="back-to-login-from-register-link" style="color:var(--admin-text-muted);font-size:0.85rem">Volver a iniciar sesión</a>
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- API Config -->
+    <script src="constants/apiConfig.js"></script>
+    <script src="assets/js/versionCheck.js"></script>
+    <!-- Auth (login form + session guard) -->
+    <script src="assets/js/auth.js"></script>
+    <!-- Public demo fork only: auto-fills and submits the login form above -->
+    <script src="assets/js/demo-autologin.js"></script>
+</body>
+</html>

@@ -1,0 +1,150 @@
+/**
+ * suit-selection.css
+ * Standalone stylesheet for pages/suitselection.html — self-contained on
+ * purpose (doesn't load dashboard.css/erp.css), so it duplicates the small
+ * slice of the light theme (palette vars, badge colors) that view needs.
+ */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg:         #f3f4f6;
+  --surface:    #ffffff;
+  --text:       #18181b;
+  --text-muted: #6b7280;
+  --text-dim:   #9ca3af;
+  --border:     #e5e7eb;
+  --accent:     #143FA5;
+}
+
+html, body {
+  height: 100%;
+  background-color: var(--bg);
+  font-family: sans-serif;
+  color: var(--text);
+}
+
+/* ── Screen: centered, fades in on load ──────────────────────────────── */
+.selection-screen {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.28s ease, transform 0.28s ease;
+}
+
+.selection-screen.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.selection-screen.leaving {
+  opacity: 0;
+  transform: translateY(-6px);
+}
+
+.selection-logo {
+  height: 40px;
+  width: auto;
+  margin-bottom: 24px;
+}
+
+.selection-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+}
+
+.selection-sub {
+  margin-top: 8px;
+  margin-bottom: 32px;
+  color: var(--text-muted);
+}
+
+/* ── Suit cards ───────────────────────────────────────────────────────── */
+.selection-grid {
+  width: 100%;
+  max-width: 760px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+  text-align: left;
+}
+
+.selection-empty {
+  color: var(--text-dim);
+}
+
+.selection-card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 18px 20px;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.selection-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+
+.selection-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.selection-card-name {
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.selection-card-slug {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-family: monospace;
+}
+
+.selection-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+/* ── Badges (duplicated from dashboard.css's .crm-badge/.badge-* on
+   purpose — this page never loads dashboard.css) ────────────────────── */
+.selection-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.73rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.selection-badge--green  { background: rgba(74, 222, 128, 0.15); color: #4ade80; }
+.selection-badge--yellow { background: rgba(251, 191, 36, 0.15); color: #fbbf24; }
+.selection-badge--red    { background: rgba(248, 113, 113, 0.15); color: #f87171; }
+.selection-badge--gray   { background: rgba(156, 163, 175, 0.15); color: #9ca3af; }
+.selection-badge--purple { background: rgba(167, 139, 250, 0.15); color: #a78bfa; }
+.selection-badge--blue   { background: rgba(96, 165, 250, 0.15); color: #60a5fa; }

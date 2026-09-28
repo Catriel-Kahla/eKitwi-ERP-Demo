@@ -1,0 +1,147 @@
+/* login.css - eKitwi ERP login, matching eKitwi Identity's login style */
+
+:root {
+    --admin-bg:           #0f0f13;
+    --admin-surface:      #1a1a22;
+    --admin-border:       rgba(255, 255, 255, 0.08);
+    --admin-accent:       #7c3aed;
+    --admin-accent-hover: #6d28d9;
+    --admin-text:         #e5e5ef;
+    --admin-text-muted:   rgba(229, 229, 239, 0.5);
+}
+
+/* ── Base ─────────────────────────────────────────────────────────────── */
+
+body.admin-login-body {
+    background: var(--admin-bg) !important;
+    color: var(--admin-text);
+    margin: 0;
+    font-family: 'Lato', sans-serif;
+    min-height: 100vh;
+}
+
+/* ── Split layout ─────────────────────────────────────────────────────── */
+
+.admin-login-split {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Left panel (60%) — dark brand showcase */
+.admin-login-brand {
+    flex: 0 0 60%;
+    max-width: 60%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    background:
+        radial-gradient(circle at 30% 30%, rgba(124, 58, 237, 0.18), transparent 60%),
+        linear-gradient(160deg, #09080d 0%, #040308 100%);
+    padding: 2rem;
+}
+
+.admin-login-logo {
+    width: 260px;
+    max-width: 50%;
+    height: auto;
+    filter: brightness(0) invert(1);
+}
+
+.admin-login-brand-text {
+    font-size: 3.5rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: #f5f5fa;
+}
+
+/* Right panel (40%) — login form */
+.admin-login-form-panel {
+    flex: 0 0 40%;
+    max-width: 40%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    background: var(--admin-surface);
+}
+
+.admin-login-card {
+    width: 100%;
+    max-width: 360px;
+}
+
+.admin-login-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.admin-login-header .subtitle {
+    color: var(--admin-text-muted);
+    margin-top: 0.25rem;
+    font-size: 0.9rem;
+}
+
+/* ── Responsive: stack panels below desktop width ────────────────────── */
+
+@media (max-width: 900px) {
+    .admin-login-split {
+        flex-direction: column;
+    }
+
+    .admin-login-brand {
+        flex: 0 0 auto;
+        max-width: 100%;
+        padding: 2.5rem 1.5rem;
+        gap: 0.75rem;
+    }
+
+    .admin-login-logo {
+        width: 130px;
+    }
+
+    .admin-login-brand-text {
+        font-size: 2.25rem;
+    }
+
+    .admin-login-form-panel {
+        flex: 1;
+        max-width: 100%;
+        padding: 2rem 1.5rem;
+    }
+}
+
+/* ── Fomantic form overrides for dark background ─────────────────────── */
+
+.admin-login-card .ui.form label {
+    color: var(--admin-text) !important;
+}
+
+.admin-login-card .ui.form input {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-color: var(--admin-border) !important;
+    color: var(--admin-text) !important;
+}
+
+.admin-login-card .ui.form input:focus {
+    border-color: var(--admin-accent) !important;
+    background: rgba(124, 58, 237, 0.08) !important;
+}
+
+.admin-login-card .ui.form input::placeholder {
+    color: var(--admin-text-muted) !important;
+}
+
+.admin-login-card .ui.form .ui.left.icon.input > i.icon {
+    color: var(--admin-text-muted) !important;
+}
+
+.admin-login-card .ui.primary.button {
+    background: var(--admin-accent) !important;
+    margin-top: 1rem;
+}
+
+.admin-login-card .ui.primary.button:hover {
+    background: var(--admin-accent-hover) !important;
+}

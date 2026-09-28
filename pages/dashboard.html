@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>eKitwi ERP — Dashboard</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/images/eKitwi.svg" />
+  <link rel="stylesheet" href="../assets/css/dashboard.css" />
+  <link rel="stylesheet" href="../assets/css/erp.css" />
+</head>
+<body>
+
+  <!-- ── Navbar ──────────────────────────────────────────── -->
+  <nav class="bubble-nav">
+    <div class="nav-left">
+      <!-- Trigger del menú "Apps" (reemplaza al aside): vive en el navbar,
+           igual que #sidebar-toggle en eKitwi Identity. appsMenu.js solo le
+           ata el listener y arma el panel flotante #apps-list (relleno por
+           renderAppsMenu() en shared-ui.js). -->
+      <button id="apps-trigger" type="button" title="Apps" aria-haspopup="true" aria-expanded="false" aria-controls="apps-list" aria-label="Apps">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/>
+          <rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>
+        </svg>
+      </button>
+      <img src="../assets/images/eKitwi_dark.svg" alt="eKitwi" class="nav-logo" />
+      <span class="nav-brand">eKitwi ERP</span>
+    </div>
+    <div class="nav-right">
+      <button class="nav-user" id="nav-user-btn" type="button" aria-haspopup="true" aria-expanded="false">
+        <span id="nav-user-name"></span>
+        <svg class="nav-user-caret" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="nav-user-menu" id="nav-user-menu" hidden>
+        <button class="nav-user-menu-item" id="logout-btn" type="button">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Cerrar sesión
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ── Menú "Apps": panel flotante que reemplaza al aside (lo inyecta
+       appsMenu.js debajo del navbar). La lista la llena renderAppsMenu()
+       en shared-ui.js con los mismos .side-item que antes vivían en el
+       sidebar, así la navegación (delegación en dashboard.js) sigue igual. -->
+
+  <!-- ── Layout ──────────────────────────────────────────── -->
+  <div class="dash-layout">
+
+    <!-- Main content -->
+    <main class="dash-main">
+
+      <!-- ── Dashboard ──────────────────────────────────── -->
+      <section class="panel active" id="panel-dashboard">
+        <div class="panel-header">
+          <h1>Dashboard</h1>
+          <p class="panel-sub">Resumen de <span id="dashboard-suit-name">tu suit</span>, según los módulos habilitados.</p>
+        </div>
+
+        <!-- Piloto Vue: la app se monta acá (ver dashboardHomeVue.js) y
+             reemplaza este nodo por su propio <div class="dashboard-grid">. -->
+        <div id="dashboard-home-app"></div>
+
+        <div class="card">
+          <div class="crm-section-title">Suit activo</div>
+          <div class="suits-grid" id="suits-grid">
+            <p class="crm-muted">Cargando…</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Commerce (POS + Pedidos) ──────────────────────── -->
+      <section class="panel" id="panel-commerce">
+        <div class="panel-header">
+          <h1>Commerce</h1>
+          <p class="panel-sub" id="commerce-suit-label">Seleccioná un suit en el menú.</p>
+        </div>
+
+        <!-- Piloto Vue: la app se monta acá (ver commerceVue.js). Incluye el
+             POS, la gestión de Pedidos y la gestión de Caja/s, con sus
+             propios modales de Caja/Abrir caja/Movimiento/Cerrar caja. -->
+        <div id="commerce-app"></div>
+      </section>
+
+      <!-- ── Inventory ──────────────────────────────────────── -->
+      <section class="panel" id="panel-inventory">
+        <div class="panel-header">
+          <h1>Inventory</h1>
+          <p class="panel-sub" id="inventory-suit-label">Seleccioná un suit en el menú.</p>
+        </div>
+
+        <!-- Home: entry cards (sin cotización del dólar/KPIs/Categorías —
+             se movieron a inventory-products-view: "Productos" ahora es la
+             pestaña propia del aside y "home" quedó sin acceso directo, ver
+             API/docs/migracion_21.md) -->
+        <div id="inventory-home">
+          <div class="module-nav-grid">
+            <button class="module-nav-card" id="inv-enter-products">
+              <div class="module-nav-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+              </div>
+              <div class="module-nav-title">Productos</div>
+              <div class="module-nav-desc" id="inv-products-count">—</div>
+            </button>
+            <button class="module-nav-card" id="inv-enter-suppliers">
+              <div class="module-nav-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+              </div>
+              <div class="module-nav-title">Proveedores</div>
+              <div class="module-nav-desc" id="inv-suppliers-count">—</div>
+            </button>
+            <button class="module-nav-card" id="inv-enter-branches">
+              <div class="module-nav-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/><path d="M9 9v.01M9 12v.01M9 15v.01M9 18v.01"/></svg>
+              </div>
+              <div class="module-nav-title">Sucursales</div>
+              <div class="module-nav-desc" id="inv-branches-count">—</div>
+            </button>
+            <button class="module-nav-card" id="inv-enter-purchaseorders">
+              <div class="module-nav-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"/><path d="M21 3l-9 9"/><path d="M21 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h6"/></svg>
+              </div>
+              <div class="module-nav-title">Pedidos a Proveedores</div>
+              <div class="module-nav-desc" id="inv-purchaseorders-count">—</div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Products sub-view -->
+        <div id="inventory-products-view" class="inventory-subview" hidden>
+          <button class="ghost-btn" id="inv-products-back">← Volver</button>
+
+          <div class="card">
+            <div class="sec-section-head"><div><div class="sec-eyebrow">Catálogo</div><h2>Productos</h2></div></div>
+            <!-- Acceso rápido a los mismos 3 filtros que las KPIs de arriba
+                 (data-products-filter) — atajo visual, mismo estado. -->
+            <div class="sec-quick-filters">
+              <button type="button" class="ghost-btn sec-quick-filter" data-products-filter="out">🔴 Sin stock</button>
+              <button type="button" class="ghost-btn sec-quick-filter" data-products-filter="low">🟡 Para reponer</button>
+              <button type="button" class="ghost-btn sec-quick-filter" data-products-filter="all">🟢 Todos</button>
+            </div>
+            <div class="crm-toolbar">
+              <input type="text" id="inv-search" placeholder="Buscar por nombre, SKU o código de barras…" />
+              <button class="ghost-btn" id="btn-percent-change">Cambio Porcentual ($)</button>
+              <button class="primary-btn" id="btn-add-product">+ Nuevo producto</button>
+            </div>
+            <div class="crm-table-wrap" id="inv-table-wrap"></div>
+            <div class="pagination" id="inv-pagination"></div>
+          </div>
+
+          <div class="inv-products-toprow">
+            <button class="module-nav-card" id="inv-enter-categories">
+              <div class="module-nav-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+              </div>
+              <div class="module-nav-title">Categorías</div>
+              <div class="module-nav-desc" id="inv-categories-count">—</div>
+            </button>
+
+            <div class="card">
+              <div class="crm-section-title">Cotización del dólar</div>
+              <div class="crm-toolbar">
+                <input type="number" id="dolar-price-input" placeholder="0.00" min="0" step="0.01" style="max-width:160px" />
+                <button class="primary-btn" id="dolar-price-save">Guardar</button>
+                <span class="crm-muted" id="dolar-price-updated"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Categories sub-view -->
+        <div id="inventory-categories-view" class="inventory-subview" hidden>
+          <button class="ghost-btn" id="inv-categories-back">← Volver</button>
+
+          <div class="card">
+            <div class="crm-toolbar">
+              <input type="text" id="cat-search" placeholder="Buscar categoría…" />
+              <button class="primary-btn" id="btn-add-cat">+ Nueva categoría</button>
+            </div>
+            <div class="crm-table-wrap" id="cat-table-wrap"></div>
+          </div>
+        </div>
+
+        <!-- Suppliers sub-view -->
+        <div id="inventory-suppliers-view" class="inventory-subview" hidden>
+          <button class="ghost-btn" id="inv-suppliers-back">← Volver</button>
+
+          <div class="card">
+            <div class="crm-toolbar">
+              <input type="text" id="sup-search" placeholder="Buscar proveedor…" />
+              <button class="primary-btn" id="btn-add-sup">+ Nuevo proveedor</button>
+            </div>
+            <div class="crm-table-wrap" id="sup-table-wrap"></div>
+          </div>
+        </div>
+
+        <!-- Branches sub-view -->
+        <div id="inventory-branches-view" class="inventory-subview" hidden>
+          <button class="ghost-btn" id="inv-branches-back">← Volver</button>
+
+          <div class="card">
+            <div class="crm-toolbar">
+              <input type="text" id="branch-search" placeholder="Buscar sucursal…" />
+              <button class="primary-btn" id="btn-add-branch">+ Nueva sucursal</button>
+            </div>
+            <div class="crm-table-wrap" id="branch-table-wrap"></div>
+          </div>
+        </div>
+
+        <!-- Purchase Orders sub-view — Vue island, ver purchaseOrdersVue.js.
+             El "← Volver" vive dentro del template Vue (igual que Commerce). -->
+        <div id="inventory-purchaseorders-view" class="inventory-subview" hidden>
+          <div id="purchaseorders-app"></div>
+        </div>
+      </section>
+
+      <!-- ── Bookings ───────────────────────────────────────── -->
+      <section class="panel" id="panel-booking">
+        <div class="panel-header">
+          <h1>Bookings</h1>
+          <p class="panel-sub" id="booking-suit-label">Seleccioná un suit en el menú.</p>
+        </div>
+
+        <!-- Piloto Vue: la app se monta acá (ver bookingVue.js), incluye sus
+             propios modales de Recurso/Cierres/Nueva reserva. -->
+        <div id="booking-app"></div>
+      </section>
+
+      <!-- ── Projects (SCRUM) ─────────────────────────────── -->
+      <section class="panel" id="panel-projects">
+        <div class="panel-header">
+          <h1>Projects</h1>
+          <p class="panel-sub" id="projects-suit-label">Seleccioná un suit en el menú.</p>
+        </div>
+
+        <!-- Home: KPIs + entry cards (Ideas / Plans / Proyectos-Scrum) -->
+        <div id="projects-home">
+          <div class="kpis" id="kpis-projects"></div>
+          <div class="module-nav-grid">
+            <button class="module-nav-card" id="proj-enter-ideas">
+              <div class="module-nav-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1v.2h6v-.2c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/></svg>
+              </div>
+              <div class="module-nav-title">Ideas</div>
+              <div class="module-nav-desc" id="proj-ideas-count">—</div>
+            </button>
+            <button class="module-nav-card" id="proj-enter-plans">
+              <div class="module-nav-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+              </div>
+              <div class="module-nav-title">Plans</div>
+              <div class="module-nav-desc" id="proj-plans-count">—</div>
+            </button>
+            <button class="module-nav-card" id="proj-enter-scrum">
+              <div class="module-nav-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+              </div>
+              <div class="module-nav-title">Proyectos</div>
+              <div class="module-nav-desc" id="proj-scrum-count">—</div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Ideas sub-view -->
+        <div id="projects-ideas-view" class="inventory-subview" hidden>
+          <button class="ghost-btn" id="proj-ideas-back">← Volver</button>
+          <div class="card">
+            <div class="crm-toolbar">
+              <button class="primary-btn" id="btn-add-idea">+ Nueva idea</button>
+            </div>
+            <div class="crm-table-wrap" id="ideas-table-wrap"></div>
+          </div>
+        </div>
+
+        <!-- Plans sub-view -->
+        <div id="projects-plans-view" class="inventory-subview" hidden>
+          <button class="ghost-btn" id="proj-plans-back">← Volver</button>
+          <div class="card">
+            <div class="crm-toolbar">
+              <button class="primary-btn" id="btn-add-plan">+ Nuevo plan</button>
+            </div>
+            <div class="crm-table-wrap" id="plans-table-wrap"></div>
+          </div>
+        </div>
+
+        <!-- Proyectos (Scrum): lista + detalle con tabs Backlog / Sprints / Tablero -->
+        <div id="projects-scrum-view" hidden>
+          <button class="ghost-btn" id="proj-scrum-back">← Volver</button>
+
+          <div id="projects-list-view">
+            <div class="projects-grid" id="projects-grid"></div>
+          </div>
+
+          <div id="projects-detail-view" hidden>
+            <button class="ghost-btn" id="projects-detail-back">← Volver a Proyectos</button>
+
+            <div class="projects-detail-header">
+              <h2 class="projects-detail-name" id="projects-detail-name"></h2>
+              <p class="crm-muted" id="projects-detail-desc"></p>
+            </div>
+
+            <div class="projects-tabs-row">
+              <div class="projects-tabs" id="projects-tabs">
+                <button class="projects-tab active" data-tab="backlog">Product Backlog</button>
+                <button class="projects-tab" data-tab="sprints">Sprints</button>
+                <button class="projects-tab" data-tab="board">Tablero</button>
+                <button class="projects-tab" data-tab="metrics">Métricas</button>
+              </div>
+              <div id="projects-tab-action"></div>
+            </div>
+
+            <div id="projects-detail-content"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Accounting (Contable) ─────────────────────────────── -->
+      <section class="panel" id="panel-accounting">
+        <div class="panel-header">
+          <h1>Accounting</h1>
+          <p class="panel-sub" id="accounting-suit-label">Seleccioná un suit en el menú.</p>
+        </div>
+
+        <!-- Piloto Vue: la app se monta acá (ver accountingVue.js). Incluye
+             el HUD (Caja/Patrimonio Neto), las 4 sub-vistas ABM (Plan de
+             Cuentas, Ejercicios+Períodos, Centros de Costo, Libro Diario) y
+             los 4 reportes (Mayor, Balance de comprobación, ESP, ER), con
+             sus propios modales de Cuenta/Ejercicio/Período/Centro/Asiento. -->
+        <div id="accounting-app"></div>
+      </section>
+
+      <!-- ── BI (dashboards nativos, resumen de todos los sistemas) ── -->
+      <section class="panel" id="panel-bi">
+        <div class="panel-header">
+          <h1>BI</h1>
+          <p class="panel-sub" id="bi-suit-label">Seleccioná un suit en el menú.</p>
+        </div>
+
+        <!-- Piloto Vue: la app se monta acá (ver biPanelVue.js) y reemplaza
+             este nodo por su propio mensaje vacío o <div class="bi-cards">. -->
+        <div id="bi-panel-app"></div>
+      </section>
+
+      <!-- ── Suit Info: nombre del suit + canales de contacto (siempre visible) ── -->
+      <section class="panel" id="panel-suit-info">
+        <div class="panel-header">
+          <h1>Suit Info</h1>
+          <p class="panel-sub" id="suitinfo-suit-label">Datos de tu suit y canales de contacto.</p>
+        </div>
+
+        <!-- Piloto Vue: la app se monta acá (ver suitInfoVue.js). -->
+        <div id="suit-info-app"></div>
+      </section>
+
+      <!-- ── Equipo: roles (plantillas de permisos) + miembros invitados — solo owner ── -->
+      <section class="panel" id="panel-team">
+        <div class="panel-header">
+          <h1>Equipo</h1>
+          <p class="panel-sub" id="team-suit-label">Seleccioná un suit en el menú.</p>
+        </div>
+
+        <!-- Piloto Vue: la app se monta acá (ver teamVue.js), incluye sus
+             propios modales de Rol/Invitar persona. -->
+        <div id="team-app"></div>
+      </section>
+
+      <!-- ── Gallery: obras + colecciones (plan eKitwi Gallery) ── -->
+      <section class="panel" id="panel-gallery">
+        <div class="panel-header">
+          <h1>Galería</h1>
+          <p class="panel-sub" id="gallery-suit-label">Seleccioná un suit en el menú.</p>
+        </div>
+
+        <!-- Piloto Vue: Home/Obras/Colecciones se montan acá (ver
+             galleryVue.js), incluye sus propios modales de Obra/Colección.
+             "Historias" sigue vanilla, es #gallery-historias-view más abajo. -->
+        <div id="gallery-app"></div>
+
+        <!-- Historias sub-view: placa 1080×1920 a partir de una obra o una nueva foto -->
+        <div id="gallery-historias-view" class="inventory-subview" hidden>
+          <button class="ghost-btn" id="ga-historias-back">← Volver</button>
+
+          <div class="hi-layout">
+            <div class="card hi-controls">
+              <div class="crm-section-title">Placa para historias</div>
+              <p class="crm-muted" style="margin:-8px 0 4px">
+                Elegí una obra ya cargada o subí una foto (se abre el editor de
+                imagen para recortar/ajustar antes de usarla). Después descargá
+                el PNG y subilo a tu historia.
+              </p>
+
+              <label class="crm-label crm-label-full">
+                Obra
+                <select id="hi-obra"></select>
+              </label>
+              <div class="crm-toolbar" style="margin-bottom:14px">
+                <button class="ghost-btn" type="button" id="hi-upload-btn">Subir otra foto</button>
+                <button class="ghost-btn" type="button" id="hi-edit-img-btn" hidden>Editar imagen</button>
+                <input type="file" id="hi-file" accept="image/jpeg,image/png,image/webp,image/gif" hidden />
+              </div>
+
+              <label class="crm-label crm-label-full">
+                Formato
+                <div class="hi-chips" id="hi-layout-chips">
+                  <button type="button" class="hi-chip is-active" data-layout="galeria">Obra + datos</button>
+                  <button type="button" class="hi-chip" data-layout="completa">Obra completa</button>
+                  <button type="button" class="hi-chip" data-layout="taller">En el taller</button>
+                  <button type="button" class="hi-chip" data-layout="atril">En el atril</button>
+                </div>
+              </label>
+
+              <div id="hi-fit-controls" hidden>
+                <label class="crm-label crm-label-full">
+                  Encuadre de la foto
+                  <div class="hi-chips" id="hi-fit-chips">
+                    <button type="button" class="hi-chip is-active" data-fit="contain">Imagen entera</button>
+                    <button type="button" class="hi-chip" data-fit="cover">Rellenar (recorta)</button>
+                  </div>
+                </label>
+              </div>
+
+              <div id="hi-atril-controls" hidden>
+                <label class="crm-label crm-label-full">
+                  Forma del cuadro
+                  <div class="hi-chips" id="hi-shape-chips">
+                    <button type="button" class="hi-chip is-active" data-shape="auto">Ajustado a la imagen</button>
+                    <button type="button" class="hi-chip" data-shape="vertical">Vertical</button>
+                    <button type="button" class="hi-chip" data-shape="horizontal">Horizontal</button>
+                    <button type="button" class="hi-chip" data-shape="square">Cuadrado</button>
+                  </div>
+                </label>
+                <label class="crm-label crm-label-full">Tamaño de la foto <span class="crm-muted">(100% = foto completa)</span>
+                  <input type="range" id="hi-atril-zoom" min="100" max="250" value="100">
+                </label>
+                <label class="crm-label crm-label-full">Posición horizontal
+                  <input type="range" id="hi-atril-x" min="0" max="100" value="50">
+                </label>
+                <label class="crm-label crm-label-full">Posición vertical
+                  <input type="range" id="hi-atril-y" min="0" max="100" value="50">
+                </label>
+              </div>
+
+              <label class="crm-label crm-label-full">
+                Color de fondo <span class="crm-muted" id="hi-tone-name"></span>
+                <div class="hi-swatches" id="hi-tone-chips"></div>
+              </label>
+              <div id="hi-custom-tone" class="hi-custom" hidden>
+                <label class="hi-colorrow"><input type="color" id="hi-c-bg" value="#f4f1ec"> Fondo</label>
+                <label class="hi-colorrow"><input type="checkbox" id="hi-c-grad"> Degradé hacia otro color</label>
+                <label class="hi-colorrow"><input type="color" id="hi-c-bg2" value="#d9c5a6"> Segundo color</label>
+                <label class="hi-colorrow"><input type="color" id="hi-c-acc" value="#8a6d4b"> Detalles (línea, antetítulo)</label>
+                <div class="hi-chips" id="hi-c-text">
+                  <button type="button" class="hi-chip is-active" data-ctext="auto">Texto automático</button>
+                  <button type="button" class="hi-chip" data-ctext="dark">Oscuro</button>
+                  <button type="button" class="hi-chip" data-ctext="light">Claro</button>
+                </div>
+              </div>
+
+              <label class="crm-label crm-label-full">Antetítulo <input type="text" id="hi-eyebrow" value="Obra disponible"></label>
+              <label class="crm-label crm-label-full">Título <input type="text" id="hi-title" placeholder="Título de la obra"></label>
+              <label class="crm-label crm-label-full">Técnica y medidas <input type="text" id="hi-meta" placeholder="Óleo sobre lienzo · 80 × 60 cm"></label>
+              <label class="crm-label crm-label-full">Texto libre <span class="crm-muted">(formato "En el taller")</span>
+                <textarea id="hi-caption" rows="2" placeholder="Trabajando en una serie nueva…"></textarea>
+              </label>
+              <label class="crm-label crm-label-full">Llamado a la acción <input type="text" id="hi-cta" value="Consultá por WhatsApp"></label>
+              <label class="crm-label crm-label-full">Usuario <input type="text" id="hi-handle" placeholder="@usuario"></label>
+
+              <div class="crm-form-row" style="margin-top:6px">
+                <label class="crm-label-check"><input type="checkbox" id="hi-badge"> Chapa "DISPONIBLE"</label>
+                <label class="crm-label-check"><input type="checkbox" id="hi-rule" checked> Línea decorativa</label>
+                <label class="crm-label-check"><input type="checkbox" id="hi-safe"> Ver zonas seguras de IG</label>
+              </div>
+
+              <button class="primary-btn" id="hi-download" style="margin-top:16px;width:100%">Descargar PNG · 1080 × 1920</button>
+            </div>
+
+            <div class="hi-previewwrap">
+              <div class="hi-scaler" id="hiScaler">
+                <div
+                  class="hi-stage" id="hiStage"
+                  data-layout="galeria" data-tone="hueso" data-fit="contain"
+                  data-show-badge="0" data-show-caption="0" data-show-cta="1"
+                  data-show-eyebrow="1" data-show-meta="1" data-show-handle="1" data-show-rule="1"
+                >
+                  <div class="hi-stage__bg"></div>
+                  <div class="hi-stage__inner">
+                    <div class="hi-stage__eyebrow" id="hiOEyebrow">Obra disponible</div>
+                    <div class="hi-stage__art">
+                      <div class="hi-art-mat">
+                        <div class="hi-art-img is-empty" id="hiArtImg">Elegí una obra o subí una foto</div>
+                      </div>
+                      <div class="hi-easel-scene">
+                        <div class="hi-easel-shadow"></div>
+                        <div class="hi-easel-leg hi-easel-leg--l"><span class="hi-easel-foot"></span></div>
+                        <div class="hi-easel-leg hi-easel-leg--r"><span class="hi-easel-foot"></span></div>
+                        <div class="hi-easel-crossbar"></div>
+                        <div class="hi-easel-ledge"></div>
+                        <div class="hi-art-frame">
+                          <div class="hi-art-img is-empty" id="hiArtImgAtril">Elegí una obra o subí una foto</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="hi-stage__foot">
+                      <span class="hi-badge hi-stage__badge">Disponible</span>
+                      <h2 class="hi-stage__title" id="hiOTitle"></h2>
+                      <p class="hi-stage__meta" id="hiOMeta"></p>
+                      <p class="hi-stage__caption" id="hiOCaption"></p>
+                      <div class="hi-rule"></div>
+                      <p class="hi-stage__cta" id="hiOCta">Consultá por WhatsApp</p>
+                      <p class="hi-stage__handle" id="hiOHandle"></p>
+                    </div>
+                  </div>
+                  <div class="hi-safe"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Feature todavía sin panel propio (contenido inyectado por dashboard.js) ── -->
+      <section class="panel" id="panel-coming-soon">
+        <div class="panel-header">
+          <h1 id="coming-soon-title">Próximamente</h1>
+          <p class="panel-sub">Esta función todavía no está disponible.</p>
+        </div>
+        <div class="card">
+          <p class="crm-muted" id="coming-soon-message">Estamos trabajando en esto — pronto vas a poder usarlo desde acá.</p>
+        </div>
+      </section>
+
+      <!-- ── Módulo en mantenimiento (contenido inyectado por shared-ui.js) ── -->
+      <section class="panel" id="panel-maintenance">
+        <div class="panel-header">
+          <h1 id="maintenance-title">Módulo en mantenimiento</h1>
+          <p class="panel-sub" id="maintenance-subtitle"></p>
+        </div>
+        <div class="card">
+          <p id="maintenance-message" class="crm-muted"></p>
+          <p id="maintenance-estimated" class="crm-muted"></p>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ── Modal: Producto ─────────────────────────────────── -->
+  <div class="crm-overlay" id="modal-product">
+    <div class="crm-modal prod-modal">
+      <div class="crm-modal-header">
+        <span class="crm-modal-title" id="modal-product-title">Nuevo producto</span>
+        <span class="crm-modal-close" id="modal-product-close">✕</span>
+      </div>
+
+      <!-- Zona arriba: identificación -->
+      <div class="crm-form-group prod-modal-section">
+        <div class="crm-form-row">
+          <label class="crm-label">
+            Nombre
+            <input type="text" id="prod-name" placeholder="Ej: Auriculares Pro" />
+          </label>
+          <label class="crm-label">
+            SKU
+            <input type="text" id="prod-sku" placeholder="Ej: AUD-001" />
+          </label>
+          <label class="crm-label">
+            Código de barras
+            <input type="text" id="prod-scanid" placeholder="Escaneá o escribí el código" />
+          </label>
+        </div>
+        <label class="crm-label crm-label-full">
+          Descripción
+          <textarea id="prod-desc" rows="2" placeholder="Descripción del producto…"></textarea>
+        </label>
+        <div class="crm-form-row">
+          <label class="crm-label">
+            Categoría
+            <select id="prod-category"></select>
+          </label>
+          <label class="crm-label">
+            Proveedor
+            <select id="prod-supplier"></select>
+          </label>
+        </div>
+      </div>
+
+      <!-- Zona media: precios -->
+      <div class="crm-form-group prod-modal-section">
+        <div class="prod-modal-section-title">Precios</div>
+        <div class="crm-form-row">
+          <label class="crm-label">
+            Precio base
+            <input type="number" id="prod-price" placeholder="0.00" min="0" step="0.01" />
+          </label>
+          <label class="crm-label">
+            Costo
+            <input type="number" id="prod-cost" placeholder="0.00" min="0" step="0.01" />
+          </label>
+        </div>
+
+        <div class="prod-extra-prices">
+          <div class="prod-extra-prices-title">Precios adicionales</div>
+          <p class="crm-muted" id="prod-prices-hint" hidden>Guardá el producto para agregarle precios adicionales.</p>
+          <div class="crm-table-wrap" id="prod-prices-wrap"></div>
+          <div class="crm-form-row prod-price-add-row" id="prod-price-add-row" hidden>
+            <label class="crm-label">
+              Nombre
+              <input type="text" id="prod-price-new-name" placeholder="Ej: Mayorista" />
+            </label>
+            <label class="crm-label">
+              Precio
+              <input type="number" id="prod-price-new-value" placeholder="0.00" min="0" step="0.01" />
+            </label>
+            <button class="ghost-btn" type="button" id="prod-price-add-btn">+ Agregar</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Zona media-baja: impuestos, estado, stock -->
+      <div class="crm-form-group prod-modal-section">
+        <div class="crm-form-row">
+          <label class="crm-label-check">
+            <input type="checkbox" id="prod-taxable" />
+            Gravado con impuestos
+          </label>
+          <label class="crm-label-check">
+            <input type="checkbox" id="prod-active" checked />
+            Activo
+          </label>
+        </div>
+        <div class="crm-form-row">
+          <label class="crm-label">
+            Stock
+            <input type="number" id="prod-stock" placeholder="0" min="0" />
+          </label>
+          <label class="crm-label">
+            Stock mínimo
+            <input type="number" id="prod-min-stock" placeholder="—" min="0" />
+          </label>
+          <label class="crm-label">
+            Stock máximo
+            <input type="number" id="prod-max-stock" placeholder="—" min="0" />
+          </label>
+        </div>
+      </div>
+
+      <!-- Zona baja: imágenes -->
+      <div class="crm-form-group prod-modal-section">
+        <div class="prod-modal-section-title">Imágenes</div>
+        <p class="crm-muted" id="prod-images-hint">Guardá el producto para poder agregarle fotos.</p>
+        <div class="prod-images-grid" id="prod-images-grid" hidden></div>
+        <div class="crm-toolbar" id="prod-images-upload-row" hidden>
+          <input type="file" id="prod-image-file" accept="image/jpeg,image/png,image/webp,image/gif" hidden />
+          <button class="ghost-btn" id="prod-image-upload-btn" type="button">+ Subir imagen</button>
+        </div>
+      </div>
+
+      <div class="form-actions modal-actions">
+        <button class="ghost-btn" id="modal-product-cancel">Cancelar</button>
+        <button class="primary-btn" id="modal-product-save">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Modal: Stock por sucursal ────────────────────────── -->
+  <div class="crm-overlay" id="modal-branch-stock">
+    <div class="crm-modal">
+      <div class="crm-modal-header">
+        <span class="crm-modal-title">Stock por sucursal</span>
+        <span class="crm-modal-close" id="modal-branch-stock-close">✕</span>
+      </div>
+      <p class="crm-muted" id="branch-stock-product-name"></p>
+      <p class="crm-muted">Esto es adicional al stock "sin sucursal" del producto (<span id="branch-stock-pool"></span>) — no lo reemplaza.</p>
+      <div class="crm-table-wrap" id="branch-stock-table-wrap"></div>
+      <div class="form-actions modal-actions">
+        <button class="ghost-btn" id="modal-branch-stock-cancel">Cerrar</button>
+        <button class="primary-btn" id="modal-branch-stock-save">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Modal: Cambio Porcentual de precios ─────────────── -->
+  <div class="crm-overlay" id="modal-percent-change">
+    <div class="crm-modal crm-modal-lg">
+      <div class="crm-modal-header">
+        <span class="crm-modal-title">Cambio Porcentual ($)</span>
+        <span class="crm-modal-close" id="modal-percent-change-close">✕</span>
+      </div>
+
+      <div id="pct-step-select">
+        <div class="crm-form-group">
+          <div class="crm-form-row">
+            <label class="crm-label crm-label-full">Agregar por categoría</label>
+          </div>
+          <div class="crm-toolbar">
+            <select id="pct-category-select"><option value="">Elegí una categoría…</option></select>
+            <button class="ghost-btn" id="pct-add-category-btn">+ Agregar productos de esta categoría</button>
+          </div>
+
+          <div class="crm-form-row">
+            <label class="crm-label crm-label-full">Buscar y agregar productos</label>
+          </div>
+          <div class="search-picker" id="pct-product-picker">
+            <input type="text" id="pct-product-search" placeholder="Buscar producto por nombre…" autocomplete="off" />
+            <div class="search-picker-results" id="pct-product-results" hidden></div>
+          </div>
+        </div>
+
+        <div class="crm-section-title" id="pct-selection-count">0 productos seleccionados</div>
+        <div class="crm-table-wrap" id="pct-selection-wrap">
+          <p class="crm-muted">Todavía no seleccionaste productos.</p>
+        </div>
+
+        <div class="crm-form-group">
+          <div class="crm-form-row">
+            <label class="crm-label">
+              % de cambio
+              <input type="number" id="pct-percent-input" placeholder="Ej: 10 (+10%) o -10 (-10%)" step="0.01" />
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div id="pct-step-preview" hidden>
+        <p class="crm-muted">Revisá los precios nuevos antes de aplicar el cambio.</p>
+        <div class="crm-table-wrap" id="pct-preview-wrap"></div>
+      </div>
+
+      <div class="form-actions modal-actions" id="pct-footer-select">
+        <button class="ghost-btn" id="modal-percent-change-cancel">Cancelar</button>
+        <button class="primary-btn" id="pct-preview-btn" disabled>Previsualizar cambios</button>
+      </div>
+      <div class="form-actions modal-actions" id="pct-footer-preview" hidden>
+        <button class="ghost-btn" id="pct-back-btn">← Volver a selección</button>
+        <button class="primary-btn" id="pct-apply-btn">Aceptar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Modal: Categoría ────────────────────────────────── -->
+  <div class="crm-overlay" id="modal-cat">
+    <div class="crm-modal crm-modal-sm">
+      <div class="crm-modal-header">
+        <span class="crm-modal-title" id="modal-cat-title">Nueva categoría</span>
+        <span class="crm-modal-close" id="modal-cat-close">✕</span>
+      </div>
+      <div class="crm-form-group">
+        <label class="crm-label">
+          Nombre
+          <input type="text" id="cat-name" placeholder="Ej: Electrónica" />
+        </label>
+        <label class="crm-label">
+          Slug
+          <input type="text" id="cat-slug" placeholder="Ej: electronica" />
+        </label>
+        <div class="crm-form-row">
+          <label class="crm-label">
+            Descuento (%)
+            <input type="number" id="cat-discount" placeholder="0" min="0" max="100" step="0.01" />
+          </label>
+        </div>
+        <div class="crm-form-row">
+          <label class="crm-label-check">
+            <input type="checkbox" id="cat-featured" />
+            Destacada en carrusel
+          </label>
+        </div>
+        <div class="crm-form-row" id="cat-order-field" hidden>
+          <label class="crm-label">
+            Orden en carrusel
+            <input type="number" id="cat-order" placeholder="0" min="0" />
+          </label>
+        </div>
+      </div>
+      <div class="form-actions modal-actions">
+        <button class="ghost-btn" id="modal-cat-cancel">Cancelar</button>
+        <button class="primary-btn" id="modal-cat-save">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Modal: Proveedor ─────────────────────────────────── -->
+  <div class="crm-overlay" id="modal-sup">
+    <div class="crm-modal">
+      <div class="crm-modal-header">
+        <span class="crm-modal-title" id="modal-sup-title">Nuevo proveedor</span>
+        <span class="crm-modal-close" id="modal-sup-close">✕</span>
+      </div>
+      <div class="crm-form-group">
+        <div class="crm-form-row">
+          <label class="crm-label crm-label-full">
+            Nombre
+            <input type="text" id="sup-name" placeholder="Ej: Distribuidora del Sur" />
+          </label>
+        </div>
+        <div class="crm-form-row">
+          <label class="crm-label">
+            Contacto
+            <input type="text" id="sup-contact" placeholder="Ej: Juan Pérez" />
+          </label>
+          <label class="crm-label">
+            CUIT / identificador fiscal
+            <input type="text" id="sup-taxid" placeholder="Ej: 30-12345678-9" />
+          </label>
+        </div>
+        <div class="crm-form-row">
+          <label class="crm-label">
+            Teléfono
+            <input type="text" id="sup-phone" placeholder="Ej: +54 11 4444-5555" />
+          </label>
+          <label class="crm-label">
+            Email
+            <input type="email" id="sup-email" placeholder="Ej: ventas@proveedor.com" />
+          </label>
+        </div>
+        <div class="crm-form-row">
+          <label class="crm-label crm-label-full">
+            Dirección
+            <input type="text" id="sup-address" placeholder="Ej: Av. Siempre Viva 123" />
+          </label>
+        </div>
+        <label class="crm-label crm-label-full">
+          Notas
+          <textarea id="sup-notes" rows="3" placeholder="Ej: entrega los martes y jueves…"></textarea>
+        </label>
+        <div class="crm-form-row">
+          <label class="crm-label-check">
+            <input type="checkbox" id="sup-active" checked />
+            Activo
+          </label>
+        </div>
+      </div>
+      <div class="form-actions modal-actions">
+        <button class="ghost-btn" id="modal-sup-cancel">Cancelar</button>
+        <button class="primary-btn" id="modal-sup-save">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Modal: Sucursal ──────────────────────────────────── -->
+  <div class="crm-overlay" id="modal-branch">
+    <div class="crm-modal">
+      <div class="crm-modal-header">
+        <span class="crm-modal-title" id="modal-branch-title">Nueva sucursal</span>
+        <span class="crm-modal-close" id="modal-branch-close">✕</span>
+      </div>
+      <div class="crm-form-group">
+        <div class="crm-form-row">
+          <label class="crm-label crm-label-full">
+            Nombre
+            <input type="text" id="branch-name" placeholder="Ej: Sucursal Centro" />
+          </label>
+        </div>
+        <div class="crm-form-row">
+          <label class="crm-label">
+            Encargado
+            <input type="text" id="branch-manager" placeholder="Ej: María López" />
+          </label>
+          <label class="crm-label">
+            Teléfono
+            <input type="text" id="branch-phone" placeholder="Ej: +54 11 4444-5555" />
+          </label>
+        </div>
+        <div class="crm-form-row">
+          <label class="crm-label crm-label-full">
+            Dirección
+            <input type="text" id="branch-address" placeholder="Ej: Av. Siempre Viva 123" />
+          </label>
+        </div>
+        <div class="crm-form-row">
+          <label class="crm-label-check">
+            <input type="checkbox" id="branch-active" checked />
+            Activa
+          </label>
+        </div>
+      </div>
+      <div class="form-actions modal-actions">
+        <button class="ghost-btn" id="modal-branch-cancel">Cancelar</button>
+        <button class="primary-btn" id="modal-branch-save">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Modal: Rol del equipo (matriz de permisos por sección) ──── -->
+  <!-- Modal: Rol y Modal: Invitar persona ahora viven en el template de
+       teamVue.js (montados dentro de #team-app), no acá. -->
+
+  <!-- ── Modal: Obra (plan Gallery) ───────────────────────── -->
+  <!-- Modal: Obra y Modal: Colección ahora viven en el template de
+       galleryVue.js (montados dentro de #gallery-app), no acá. -->
+
+  <!-- ── Modal: Caja/Abrir caja/Movimiento/Cerrar caja ─────── -->
+  <!-- Los 4 modales de Commerce (Caja/Abrir caja/Movimiento/Cerrar caja)
+       ahora viven en el template de commerceVue.js (montados dentro de
+       #commerce-app), no acá. -->
+
+  <!-- ── Modal: Recurso de booking ───────────────────────── -->
+  <!-- Modal: Recurso, Modal: Cierres y Modal: Nueva reserva ahora viven en
+       el template de bookingVue.js (montados dentro de #booking-app). -->
+
+  <!-- ── Modal: Proyecto ──────────────────────────────────── -->
+  <div class="crm-overlay" id="modal-project">
+    <div class="crm-modal">
+      <div class="crm-modal-header">
+        <span class="crm-modal-title" id="modal-project-title">Nuevo proyecto</span>
+        <span class="crm-modal-close" id="modal-project-close">✕</span>
+      </div>
+      <div class="crm-form-group">
+        <label class="crm-label crm-label-full">
+          Nombre del proyecto
+          <input type="text" id="project-name" placeholder="Mi proyecto Scrum" maxlength="80" />
+        </label>
+        <label class="crm-label crm-label-full">
+          Descripción
+          <textarea id="project-description" rows="2" placeholder="¿De qué trata este proyecto? (opcional)"></textarea>
+        </label>
+        <div class="crm-label crm-label-full">
+          Color
+          <div class="color-swatches" id="project-color-swatches"></div>
+        </div>
+      </div>
+      <div class="form-actions modal-actions">
+        <button class="ghost-btn" id="modal-project-cancel">Cancelar</button>
+        <button class="primary-btn" id="modal-project-save">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Modal: Historia de usuario ───────────────────────── -->
+  <div class="crm-overlay" id="modal-story">
+    <div class="crm-modal">
+      <div class="crm-modal-header">
+        <span class="crm-modal-title" id="modal-story-title">Nueva historia</span>
+        <span class="crm-modal-close" id="modal-story-close">✕</span>
+      </div>
+      <div class="crm-form-group">
+        <label class="crm-label crm-label-full">
+          Historia de usuario
+          <textarea id="story-title" rows="3" placeholder="Como [rol], quiero [funcionalidad], para [beneficio]."></textarea>
+        </label>
+        <div class="crm-form-row">
+          <label class="crm-label">
+            Prioridad
+            <select id="story-priority">
+              <option value="high">Alta</option>
+              <option value="medium" selected>Media</option>
+              <option value="low">Baja</option>
+            </select>
+          </label>
+          <label class="crm-label">
+            Story Points
+            <input type="number" id="story-points" min="1" max="100" value="3" />
+          </label>
+        </div>
+        <label class="crm-label crm-label-full">
+          Asignado a
+          <select id="story-assignee">
+            <option value="">Sin asignar</option>
+          </select>
+        </label>
+      </div>
+      <div class="form-actions modal-actions">
+        <button class="ghost-btn" id="modal-story-cancel">Cancelar</button>
+        <button class="primary-btn" id="modal-story-save">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Modal: Idea ──────────────────────────────────────── -->
+  <div class="crm-overlay" id="modal-idea">
+    <div class="crm-modal">
+      <div class="crm-modal-header">
+        <span class="crm-modal-title" id="modal-idea-title">Nueva idea</span>
+        <span class="crm-modal-close" id="modal-idea-close">✕</span>
+      </div>
+      <div class="crm-form-group">
+        <label class="crm-label crm-label-full">
+          Título
+          <input type="text" id="idea-title" placeholder="¿Qué se te ocurrió?" maxlength="150" />
+        </label>
+        <label class="crm-label crm-label-full">
+          Notas
+          <textarea id="idea-notes" rows="3" placeholder="Detalles, contexto, links… (opcional)"></textarea>
+        </label>
+        <div class="crm-form-row">
+          <label class="crm-label">
+            Tags
+            <input type="text" id="idea-tags" placeholder="ux, billing (separados por coma)" />
+          </label>
+          <label class="crm-label">
+            Estado
+            <select id="idea-status">
+              <option value="new">Nueva</option>
+              <option value="in_review">En revisión</option>
+              <option value="approved">Aprobada</option>
+              <option value="discarded">Descartada</option>
+            </select>
+          </label>
+        </div>
+      </div>
+      <div class="form-actions modal-actions">
+        <button class="ghost-btn" id="modal-idea-cancel">Cancelar</button>
+        <button class="primary-btn" id="modal-idea-save">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Modal: Plan ──────────────────────────────────────── -->
+  <div class="crm-overlay" id="modal-plan">
+    <div class="crm-modal">
+      <div class="crm-modal-header">
+        <span class="crm-modal-title" id="modal-plan-title">Nuevo plan</span>
+        <span class="crm-modal-close" id="modal-plan-close">✕</span>
+      </div>
+      <div class="crm-form-group">
+        <label class="crm-label crm-label-full">
+          Objetivo
+          <input type="text" id="plan-objective" placeholder="¿Qué se quiere lograr?" maxlength="200" />
+        </label>
+        <label class="crm-label crm-label-full">
+          Notas
+          <textarea id="plan-notes" rows="3" placeholder="Detalles, pasos, dependencias… (opcional)"></textarea>
+        </label>
+        <div class="crm-form-row">
+          <label class="crm-label">
+            Fecha objetivo
+            <input type="date" id="plan-target-date" />
+          </label>
+          <label class="crm-label">
+            Estado
+            <select id="plan-status">
+              <option value="draft">Borrador</option>
+              <option value="in_progress">En curso</option>
+              <option value="done">Cumplido</option>
+              <option value="cancelled">Cancelado</option>
+            </select>
+          </label>
+        </div>
+      </div>
+      <div class="form-actions modal-actions">
+        <button class="ghost-btn" id="modal-plan-cancel">Cancelar</button>
+        <button class="primary-btn" id="modal-plan-save">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Modal: Agregar / reasignar historia a un Sprint ─── -->
+  <div class="crm-overlay" id="modal-move-sprint">
+    <div class="crm-modal crm-modal-sm">
+      <div class="crm-modal-header">
+        <span class="crm-modal-title" id="modal-move-sprint-title">Agregar al Sprint</span>
+        <span class="crm-modal-close" id="modal-move-sprint-close">✕</span>
+      </div>
+      <p class="crm-muted" id="move-current-sprint-note" hidden></p>
+      <div class="crm-form-group" id="move-select-field">
+        <label class="crm-label crm-label-full">
+          Seleccioná un sprint
+          <select id="move-sprint-select"></select>
+        </label>
+      </div>
+      <div class="form-actions modal-actions">
+        <button class="ghost-btn" id="modal-move-sprint-cancel">Cancelar</button>
+        <button class="ghost-btn btn-danger" id="move-remove-btn" hidden>Quitar del sprint</button>
+        <button class="primary-btn" id="move-confirm-btn">Agregar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Modal: Sprint ─────────────────────────────────────── -->
+  <div class="crm-overlay" id="modal-sprint">
+    <div class="crm-modal">
+      <div class="crm-modal-header">
+        <span class="crm-modal-title" id="modal-sprint-title">Nuevo Sprint</span>
+        <span class="crm-modal-close" id="modal-sprint-close">✕</span>
+      </div>
+      <div class="crm-form-group">
+        <label class="crm-label crm-label-full">
+          Nombre del Sprint
+          <input type="text" id="sprint-name" placeholder="Sprint 1" />
+        </label>
+        <label class="crm-label crm-label-full">
+          Objetivo
+          <textarea id="sprint-goal" rows="2" placeholder="¿Qué queremos lograr en este sprint? (opcional)"></textarea>
+        </label>
+        <div class="crm-form-row">
+          <label class="crm-label">
+            Fecha de inicio
+            <input type="date" id="sprint-start" />
+          </label>
+          <label class="crm-label">
+            Fecha de fin
+            <input type="date" id="sprint-end" />
+          </label>
+        </div>
+      </div>
+      <div class="form-actions modal-actions">
+        <button class="ghost-btn" id="modal-sprint-cancel">Cancelar</button>
+        <button class="primary-btn" id="modal-sprint-save">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Modal: Cuenta/Ejercicio/Período/Centro/Asiento ───────────── -->
+  <!-- Los 5 modales de Accounting ahora viven en el template de
+       accountingVue.js (montados dentro de #accounting-app), no acá. -->
+
+  <!-- ── Modal: Confirmar acción (borrar / cancelar / devolver) ─────── -->
+  <div class="crm-overlay" id="modal-confirm">
+    <div class="crm-modal crm-modal-sm">
+      <div class="crm-modal-header">
+        <span class="crm-modal-title">Confirmar</span>
+        <span class="crm-modal-close" id="modal-confirm-close">✕</span>
+      </div>
+      <p class="delete-msg" id="modal-confirm-msg">¿Confirmás esta acción?</p>
+      <label class="crm-label-check" id="modal-confirm-restock-wrap" hidden>
+        <input type="checkbox" id="modal-confirm-restock" checked />
+        Reingresar el stock
+      </label>
+      <div class="form-actions modal-actions">
+        <button class="ghost-btn" id="modal-confirm-cancel">Cancelar</button>
+        <button class="ghost-btn btn-danger" id="modal-confirm-ok">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── AI Assistant: DESHABILITADO temporalmente ───────────────────────
+       El asistente no funciona bien con Gemini; se reactivará cuando
+       tengamos el modelo local propio (ver "eKitwi AI/"). Para reactivarlo:
+       descomentar este bloque y la llamada a initAssistant() en dashboard.js.
+  <button class="assistant-bubble" id="assistant-bubble" title="Asistente eKitwi" aria-label="Abrir asistente"></button>
+  <div class="assistant-panel" id="assistant-panel">
+    <div class="assistant-panel-header">
+      <span class="assistant-panel-title">Asistente eKitwi</span>
+      <span class="crm-modal-close" id="assistant-close">✕</span>
+    </div>
+    <div class="assistant-messages" id="assistant-messages"></div>
+    <form class="assistant-input-row" id="assistant-form">
+      <input type="text" id="assistant-input" placeholder="Preguntá algo o pedí una acción..." autocomplete="off" />
+      <button type="submit" class="primary-btn assistant-send-btn">Enviar</button>
+    </form>
+  </div>
+  ─────────────────────────────────────────────────────────────────────── -->
+
+  <!-- Toast -->
+  <div class="crm-toast" id="crm-toast"></div>
+
+  <script src="../constants/apiConfig.js"></script>
+  <script src="../assets/js/versionCheck.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <!-- Public demo fork only: "this is a demo" ribbon + periodic auto-reset -->
+  <script src="../assets/js/demo-banner.js"></script>
+  <script src="../assets/js/reportWidget.js"></script>
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/constants.js"></script>
+  <script src="../assets/js/mocks.js"></script>
+  <script src="../assets/js/data.js"></script>
+  <script src="../assets/js/imageEditor.js"></script>
+  <script src="../assets/js/suit-state.js"></script>
+  <script src="../assets/js/permissions.js"></script>
+  <script src="../assets/js/shared-ui.js"></script>
+  <script src="../assets/js/appsMenu.js"></script>
+  <script src="../assets/js/inventory.js"></script>
+  <script src="../assets/js/projects.js"></script>
+  <script src="../assets/js/scrum-ideas.js"></script>
+  <script src="../assets/js/scrum-plans.js"></script>
+  <script src="../assets/js/bi.js"></script>
+  <script src="../assets/js/historias.js"></script>
+  <!-- Piloto Vue (paneles Dashboard/home, BI, Suit Info, Equipo, Galería,
+       Bookings, Accounting, Commerce) — dashboardHome.js y el loadBiPanel()
+       de bi.js quedan en el repo sin cargarse (pisados por éstos, que se
+       cargan después), de referencia/rollback. suitInfo.js, team.js,
+       gallery.js, booking.js, accounting.js y commerce.js se sacaron de
+       esta lista por completo (sus *Vue.js los reemplazan enteros).
+       historias.js (la sub-vista "Historias" de Galería) sigue vanilla —
+       ver la nota al principio de galleryVue.js sobre por qué
+       initGalleryEvents() (que antes ataba listeners) ahora monta la app en
+       vez de ser un no-op. -->
+  <script src="https://cdn.jsdelivr.net/npm/vue@3.4.31/dist/vue.global.prod.js"></script>
+  <script src="../assets/js/vueCharts.js"></script>
+  <script src="../assets/js/dashboardHomeVue.js"></script>
+  <script src="../assets/js/biPanelVue.js"></script>
+  <script src="../assets/js/suitInfoVue.js"></script>
+  <script src="../assets/js/teamVue.js"></script>
+  <script src="../assets/js/galleryVue.js"></script>
+  <script src="../assets/js/bookingVue.js"></script>
+  <script src="../assets/js/accountingVue.js"></script>
+  <script src="../assets/js/commerceVue.js"></script>
+  <script src="../assets/js/purchaseOrdersVue.js"></script>
+  <script src="../assets/js/assistant.js"></script>
+  <script src="../assets/js/dashboard.js"></script>
+  <script src="../assets/js/notifications.js"></script>
+  <script src="../assets/js/fabMenu.js"></script>
+</body>
+</html>

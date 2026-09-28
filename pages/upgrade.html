@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contratá un servicio - eKitwi ERP</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/images/eKitwi.svg">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/semantic.min.css">
+    <link rel="stylesheet" href="../assets/css/login.css">
+</head>
+<body class="admin-login-body">
+
+    <div class="admin-login-split">
+        <div class="admin-login-brand">
+            <img class="admin-login-logo" src="../assets/images/eKitwi.svg" alt="eKitwi">
+            <span class="admin-login-brand-text">ERP</span>
+        </div>
+
+        <div class="admin-login-form-panel">
+            <div class="admin-login-card">
+                <div class="admin-login-header">
+                    <p class="subtitle">Tu cuenta todavía no tiene un servicio activo</p>
+                </div>
+
+                <p style="color:var(--admin-text-muted);font-size:0.92rem;line-height:1.6;margin-bottom:1.5rem">
+                    El ERP funciona sobre un suit con al menos un servicio contratado: Comercio, Inventario,
+                    Reservas, Proyectos, Contabilidad, BI o Galería. Escribinos y te ayudamos a elegir el
+                    plan que necesitás para arrancar.
+                </p>
+
+                <div style="display:flex;flex-direction:column;gap:0.6rem">
+                    <a class="ui fluid large button" style="background:#25D366;color:#fff" target="_blank" rel="noopener"
+                       href="https://wa.me/5493416055451?text=Hola%2C%20quiero%20contratar%20un%20servicio%20de%20eKitwi">
+                        <i class="whatsapp icon"></i> Consultar por WhatsApp
+                    </a>
+                    <a class="ui fluid large basic button" style="color:var(--admin-text) !important;border-color:var(--admin-border) !important"
+                       href="mailto:contacto@ekitwi.com?subject=Quiero%20contratar%20un%20servicio%20de%20eKitwi">
+                        <i class="mail icon"></i> Escribir por email
+                    </a>
+                </div>
+
+                <p style="text-align:center;margin-top:1.5rem">
+                    <a href="#" id="logout-btn" style="color:var(--admin-text-muted);font-size:0.85rem">Cerrar sesión</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- API Config -->
+    <script src="../constants/apiConfig.js"></script>
+    <script src="../assets/js/versionCheck.js"></script>
+    <!-- Auth (route guard + logout) -->
+    <script src="../assets/js/auth.js"></script>
+</body>
+</html>
